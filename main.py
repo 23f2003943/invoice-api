@@ -102,13 +102,25 @@ def extract(req: InvoiceRequest):
         except:
             pass
 
-    # ---------------- Amount ----------------
+# ---------------- Amount ----------------
 
-    amount = parse_money(search([
-        r"Subtotal\s*[:\-]?\s*(?:Rs\.?|INR|USD|EUR|GBP|\$|₹)?\s*([\d,]+\.\d+)",
-        r"Sub\s*Total\s*[:\-]?\s*(?:Rs\.?|INR|USD|EUR|GBP|\$|₹)?\s*([\d,]+\.\d+)",
-        r"Net\s*Amount\s*[:\-]?\s*(?:Rs\.?|INR|USD|EUR|GBP|\$|₹)?\s*([\d,]+\.\d+)",
-    ], text))
+    amount = None
+
+    amount_patterns = [
+        r"Subtotal\s*[:\-]?\s*(?:Rs\.?|INR|USD|EUR|GBP|\$|₹)?\s*([\d,]+(?:\.\d+)?)",
+        r"Sub\s*Total\s*[:\-]?\s*(?:Rs\.?|INR|USD|EUR|GBP|\$|₹)?\s*([\d,]+(?:\.\d+)?)",
+        r"Net\s*Amount\s*[:\-]?\s*(?:Rs\.?|INR|USD|EUR|GBP|\$|₹)?\s*([\d,]+(?:\.\d+)?)",
+        r"Amount\s*[:\-]?\s*(?:Rs\.?|INR|USD|EUR|GBP|\$|₹)?\s*([\d,]+(?:\.\d+)?)",
+        r"Taxable\s*Amount\s*[:\-]?\s*(?:Rs\.?|INR|USD|EUR|GBP|\$|₹)?\s*([\d,]+(?:\.\d+)?)",
+        r"Base\s*Amount\s*[:\-]?\s*(?:Rs\.?|INR|USD|EUR|GBP|\$|₹)?\s*([\d,]+(?:\.\d+)?)",
+        r"Value\s*[:\-]?\s*(?:Rs\.?|INR|USD|EUR|GBP|\$|₹)?\s*([\d,]+(?:\.\d+)?)",
+    ]
+
+    for p in amount_patterns:
+        m = re.search(p, text, re.IGNORECASE)
+        if m:
+           amount = parse_money(m.group(1))
+           break
 
     # ---------------- Tax ----------------
 
