@@ -44,7 +44,10 @@ def extract(req: InvoiceRequest):
     text = req.invoice_text
 
     invoice_no = find([
-        r"Invoice\s*(?:No|#)?\s*[:#]\s*([A-Za-z0-9\-\/]+)",
+        r"Invoice\s*(?:No|Number|#)?\s*[:#-]?\s*([A-Za-z0-9\-\/]+)",
+        r"Inv(?:oice)?\s*(?:No|Number|#)?\s*[:#-]?\s*([A-Za-z0-9\-\/]+)",
+        r"Bill\s*(?:No|Number|#)?\s*[:#-]?\s*([A-Za-z0-9\-\/]+)",
+        r"Reference\s*(?:No|Number)?\s*[:#-]?\s*([A-Za-z0-9\-\/]+)",
     ], text)
 
     vendor = find([
